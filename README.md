@@ -54,6 +54,7 @@ python mgtn.py data/coco --image-size 448 --workers 8 --batch-size 32 --lr 0.03 
 ## Reference
 This project is based on the following implementations:
 
+- https://github.com/ReML-AI/sgtn
 - https://github.com/durandtibo/wildcat.pytorch
 - https://github.com/tkipf/pygcn
 - https://github.com/Megvii-Nanjing/ML_GCN/
