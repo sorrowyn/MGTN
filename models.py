@@ -61,10 +61,10 @@ class MGTNResnet(nn.Module):
             model.layer3,
             model.layer4,
             )
-            self.add_module('backbone' + str(i), backbone)
+            self.add_module('backbone' + str(i+1), backbone)
             self.backbones.append(backbone)
             pooling = nn.MaxPool2d(14, 14)
-            self.add_module('pooling' + str(i), pooling)
+            self.add_module('pooling' + str(i+1), pooling)
             self.poolings.append(pooling)
 
         self.num_classes = num_classes
