@@ -11,7 +11,7 @@ Please, install the following packages
 - networkx
 
 ### Download best checkpoints
-checkpoint/coco/mgtn_final_86.9762.pth.tar ([Dropbox](https://www.dropbox.com/s/fr2286gwxsg80kq/mgtn_final_86.9762.pth.tar?dl=0)) or ([BaiDu](https://pan.baidu.com/s/1bZ5xE6b078DktqkSGTT4RQ)),(password:Lkknm)
+checkpoint/coco/mgtn_final_86.9762.pth.tar ([Dropbox](https://www.dropbox.com/s/fr2286gwxsg80kq/mgtn_final_86.9762.pth.tar?dl=0)) or ([BaiDu](https://pan.baidu.com/s/1bZ5xE6b078DktqkSGTT4RQ)),(password:kknm)
 
 ### Performance
 
