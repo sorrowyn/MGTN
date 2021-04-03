@@ -9,7 +9,7 @@ import torchnet as tnt
 import torchvision.transforms as transforms
 import torch.nn as nn
 from util import *
-import neptune
+# import neptune
 
 tqdm.monitor_interval = 0
 class Engine(object):
@@ -173,6 +173,15 @@ class Engine(object):
                                                  batch_size=self.state['batch_size_test'], shuffle=False,
                                                  num_workers=self.state['workers'])
 
+        if self.state['use_gpu']:
+            train_loader.pin_memory = True
+            val_loader.pin_memory = True
+            cudnn.benchmark = False
+            model = torch.nn.DataParallel(model, device_ids=self.state['device_ids']).cuda()
+            # model = model.cuda()
+
+            criterion = criterion.cuda()
+
         # optionally resume from a checkpoint
         if self._state('resume') is not None:
             if os.path.isfile(self.state['resume']):
@@ -180,20 +189,22 @@ class Engine(object):
                 checkpoint = torch.load(self.state['resume'])
                 self.state['start_epoch'] = checkpoint['epoch']
                 self.state['best_score'] = checkpoint['best_score']
-                model.load_state_dict(checkpoint['state_dict'])
+                state_dict =checkpoint['state_dict']
+                from collections import OrderedDict
+                new_state_dict = OrderedDict()
+
+                for k, v in state_dict.items():
+                    if 'module' not in k:
+                        k = 'module.'+k
+                    else:
+                        k = k.replace('features.module.', 'module.features.')
+                    new_state_dict[k]=v
+
+                model.load_state_dict(new_state_dict)
                 print("=> loaded checkpoint '{}' (epoch {})"
                       .format(self.state['evaluate'], checkpoint['epoch']))
             else:
                 print("=> no checkpoint found at '{}'".format(self.state['resume']))
-
-
-        if self.state['use_gpu']:
-            train_loader.pin_memory = True
-            val_loader.pin_memory = True
-            cudnn.benchmark = False
-            model = torch.nn.DataParallel(model, device_ids=self.state['device_ids']).cuda()
- 
-            criterion = criterion.cuda()
 
         if self.state['evaluate']:
             self.validate(val_loader, model, criterion)
@@ -254,7 +265,7 @@ class Engine(object):
             self.on_start_batch(True, model, criterion, data_loader, optimizer)
 
             if self.state['use_gpu']:
-                self.state['target'] = self.state['target'].cuda(async=True)
+                self.state['target'] = self.state['target'].cuda()
 
             self.on_forward(True, model, criterion, data_loader, optimizer)
 
@@ -290,7 +301,7 @@ class Engine(object):
             self.on_start_batch(False, model, criterion, data_loader)
 
             if self.state['use_gpu']:
-                self.state['target'] = self.state['target'].cuda(async=True)
+                self.state['target'] = self.state['target'].cuda()
 
             self.on_forward(False, model, criterion, data_loader)
 
@@ -440,7 +451,7 @@ class GCNMultiLabelMAPEngine(MultiLabelMAPEngine):
             # compute output
             self.state['output'] = model(feature_var, inp_var)
             self.state['loss'] = criterion(self.state['output'], target_var)
-            
+
             optimizer.zero_grad()
             self.state['loss'].backward()
             nn.utils.clip_grad_norm_(model.parameters(), max_norm=10.0)
@@ -459,7 +470,7 @@ class GCNMultiLabelMAPEngine(MultiLabelMAPEngine):
                 self.state['loss'] = criterion(self.state['output'], target_var)
                 with open('out.csv', 'a') as f:
                     f.write(to_csv(self.state['output'].detach().cpu().numpy()[0]) + '\n')
-                torch.cuda.empty_cache()    
+                torch.cuda.empty_cache()
 
 
     def on_start_batch(self, training, model, criterion, data_loader, optimizer=None, display=True):
@@ -472,4 +483,4 @@ class GCNMultiLabelMAPEngine(MultiLabelMAPEngine):
         self.state['feature'] = input[0]
         self.state['out'] = input[1]
         self.state['input'] = input[2]
-
+        
