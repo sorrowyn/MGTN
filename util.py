@@ -8,6 +8,10 @@ import random
 import torch.nn.functional as F
 import torchvision.models as models
 
+def to_csv(np_arr):
+    s = StringIO()
+    np.savetxt(s, np_arr, fmt='%s', newline=",")
+    return s.getvalue()[:-1]
 
 def download_url(url, destination=None, progress_bar=True):
     """Download a URL to a local file.
