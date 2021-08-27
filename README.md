@@ -31,7 +31,7 @@ checkpoint/coco/mgtn_final_86.9762.pth.tar ([Dropbox](https://www.dropbox.com/s/
 
 ** SGTN (Our): https://github.com/ReML-AI/sgtn 
 
-### TGCN on COCO
+### MGTN on COCO
 
 ```sh
 python mgtn.py data/coco --image-size 448 --workers 8 --batch-size 32 --lr 0.03 --learning-rate-decay 0.1 --epoch_step 20 30 --embedding model/embedding/coco_glove_word2vec_80x300_ec.pkl --adj-strong-threshold 0.4 --adj-weak-threshold 0.2 --device_ids 0 1 2 3
