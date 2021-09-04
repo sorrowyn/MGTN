@@ -1,5 +1,6 @@
 # Modular Graph Transformer Networks for Multi-Label Image Classification (MGTN)
 This project implements the multi-learning based on Modular Graph Transformer Networks (MGTN). 
+
 Official GitHub: https://github.com/ReML-AI/MGTN
 ### Requirements
 Please, install the following packages
